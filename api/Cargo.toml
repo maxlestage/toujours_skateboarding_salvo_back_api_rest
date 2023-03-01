@@ -9,3 +9,5 @@ edition = "2021"
 salvo = "*"
 tokio = { version = "^1", features = ["macros"] }
 database_connection = { path = "../database_connection" }
+serde = "^1"
+serde_json = "^1"
