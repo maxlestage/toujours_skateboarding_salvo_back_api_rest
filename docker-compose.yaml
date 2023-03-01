@@ -1,0 +1,15 @@
+version: "3"
+services:
+  db:
+    container_name: toujours_skateboarding-db
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=toujours_skateboarding
+    volumes:
+      - toujours_skateboarding-db-data:/var/lib/postgresql/data
+      - ./init-database.sh:/docker-entrypoint-initdb.d/init-database.sh
+    ports:
+      - "5432:5432"
+volumes:
+  toujours_skateboarding-db-data:
