@@ -7,10 +7,11 @@ edition = "2021"
 
 
 [workspace]
-members = [".", "api", "database_connection", "migration"]
+members = [".", "api", "database_connection", "migration", "queries"]
 
 
 [dependencies]
 api = { path = "api" }
 database_connection = { path = "database_connection" }
 migration = { path = "migration" }
+queries = {path = "queries"}

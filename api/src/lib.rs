@@ -1,3 +1,5 @@
+// use database_connection::db_connection;
+use database_connection::db_connection::db_connection;
 use salvo::prelude::*;
 
 #[handler]
@@ -13,7 +15,7 @@ async fn hello_by_id(req: &mut Request) -> String {
 
 #[tokio::main]
 pub async fn main() {
-    database_connection::main().await.expect("Error");
+    db_connection().await.expect("Error");
 
     // Define Routing tree
     let routing = Router::with_path("")
