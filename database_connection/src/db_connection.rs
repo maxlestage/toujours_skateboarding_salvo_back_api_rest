@@ -2,9 +2,11 @@ use std::time::Duration;
 
 use sea_orm::{ConnectOptions, Database, DatabaseConnection, DbErr};
 
+const DATABASE_URL: &str = "postgres://postgres:toujours_skateboarding@localhost:5432";
+const DB_NAME: &str = "toujours_skateboarding_db";
 pub async fn db_connection() -> Result<DatabaseConnection, DbErr> {
-    let mut opt =
-        ConnectOptions::new("postgres://postgres:toujours_skateboarding@localhost:5432".to_owned());
+    let url: String = format!("{}/{}", DATABASE_URL, DB_NAME);
+    let mut opt = ConnectOptions::new(url.to_owned());
     opt.acquire_timeout(Duration::from_secs(10))
         .sqlx_logging(true);
 
