@@ -1,10 +1,11 @@
 use auth::jwt_auth::{sign_in, JwtClaims, SECRET_KEY};
 use database_connection::db_connection::db_connection;
 use queries::*;
-use salvo::http::StatusCode;
+use salvo::http::{response, StatusCode};
 use salvo::jwt_auth::HeaderFinder;
 use salvo::prelude::*;
 use salvo::{__private::tracing, handler /* , prelude::* */};
+use scraper::thrasher_latest_videos::scraper;
 use sea_orm::{entity::*, DatabaseConnection};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
@@ -16,7 +17,7 @@ struct User {
     lastname: String,
     mail: String,
     password: String,
-    role: String,
+    role: Option<String>,
 }
 
 #[handler]
@@ -42,6 +43,14 @@ async fn sign_up(user_input: User, res: &mut Response) {
     }
 }
 
+#[handler]
+async fn scraptest(/* res: &mut Response */) -> anyhow::Result<()> {
+    println!("{:#?}", scraper().await);
+
+    // res.render(Text::Json(scraper().await));
+    Ok(())
+}
+
 #[tokio::main]
 pub async fn main() {
     tracing_subscriber::fmt().init();
@@ -53,7 +62,7 @@ pub async fn main() {
 
     // Define Routing tree
     let routing = Router::new()
-        .get(hello_world)
+        .get(scraptest)
         .push(Router::with_path("signup").post(sign_up))
         .push(Router::with_path("signin").post(sign_in))
         .push(

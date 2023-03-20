@@ -7,7 +7,7 @@ edition = "2021"
 
 
 [workspace]
-members = [".", "api", "database_connection","auth" , "migration", "queries", "entities"]
+members = [".", "api", "database_connection","auth" , "migration", "queries", "entities", "scraper"]
 
 
 [dependencies]
@@ -17,6 +17,7 @@ migration = { path = "migration" }
 queries = { path = "queries" }
 entities = { path = "entities" }
 auth =  {path = "auth" }
+scraper = { path = "scraper" }
 
 [workspace.dependencies]
 tokio = { version = "^1", features = ["macros"] }

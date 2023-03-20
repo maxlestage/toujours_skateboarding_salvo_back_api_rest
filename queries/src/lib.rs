@@ -2,6 +2,7 @@ use chrono::Local;
 use entities::prelude::*;
 use entities::*;
 
+use entities::user::Role;
 use sea_orm::ActiveModelTrait;
 // use sea_orm::ActiveValue;
 use sea_orm::ColumnTrait;
@@ -20,6 +21,15 @@ pub async fn create_user(
 
     let user_password = user_inputed.password.as_ref().clone();
     let hashed = hash(&user_password, DEFAULT_COST).unwrap();
+
+    user_inputed.role = sea_orm::ActiveValue::Set(Role::User);
+
+    // match user_role {
+    //     Some(Role::Admin) => sea_orm::ActiveValue::Set(Some(Role::Admin)),
+    //     Some(Role::User) => sea_orm::ActiveValue::Set(Some(Role::User)),
+    //     None => sea_orm::ActiveValue::Set(Some(Role::Guest)),
+    //     _ => sea_orm::ActiveValue::Set(Some(Role::Guest)),
+    // };
 
     user_inputed.sign_up_date =
         sea_orm::ActiveValue::Set(Some(Local::now().to_owned().date_naive()));

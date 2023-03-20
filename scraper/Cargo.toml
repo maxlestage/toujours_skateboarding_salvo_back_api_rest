@@ -1,0 +1,18 @@
+[package]
+name = "scraper"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+
+[lib]
+name = "scraper"
+path = "src/lib.rs"
+
+[dependencies]
+futures = {workspace = true }
+async-std = { version = "1", features = ["attributes", "tokio1"] }
+reqwest = {version = "^0.11", features = ["blocking"]} 
+scraper = "^0.15.0"
+tokio = { version = "^1", features = ["macros"] }

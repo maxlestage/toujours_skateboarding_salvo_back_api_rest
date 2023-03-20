@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 salvo = "*"
+anyhow = "1"
 tokio = { version = "^1", features = ["macros"] }
 database_connection = { path = "../database_connection" }
 serde = "^1"
@@ -16,5 +17,6 @@ jsonwebtoken = "8.0"
 auth= { path = "../auth" }
 sea-orm = { version = "^0", features = [ "sqlx-postgres", "runtime-tokio-rustls", "with-json", "with-chrono" ] }
 async-std = { version = "1", features = ["attributes", "tokio1"] }
-queries= { path = "../queries" }
-entities= { path = "../entities" }
+queries = { path = "../queries" }
+entities = { path = "../entities" }
+scraper =  { path = "../scraper" }
