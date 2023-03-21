@@ -1,7 +1,7 @@
 use auth::jwt_auth::{sign_in, JwtClaims, SECRET_KEY};
 use database_connection::db_connection::db_connection;
 use queries::*;
-use salvo::http::{response, StatusCode};
+use salvo::http::StatusCode;
 use salvo::jwt_auth::HeaderFinder;
 use salvo::prelude::*;
 use salvo::{__private::tracing, handler /* , prelude::* */};
