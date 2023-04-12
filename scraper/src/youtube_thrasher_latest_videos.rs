@@ -48,6 +48,4 @@ pub async fn scraper_yt() {
             video_name, /* description */ formated_link
         );
     }
-
-    // document
 }

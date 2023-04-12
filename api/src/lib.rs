@@ -1,6 +1,6 @@
 use auth::jwt_auth::{sign_in, JwtClaims, SECRET_KEY};
 use database_connection::db_connection::db_connection;
-use queries::*;
+use queries::user_queries::create_user;
 use salvo::http::StatusCode;
 use salvo::jwt_auth::HeaderFinder;
 use salvo::prelude::*;
@@ -44,11 +44,8 @@ async fn sign_up(user_input: User, res: &mut Response) {
 }
 
 #[handler]
-async fn scraptest(/* res: &mut Response */) -> anyhow::Result<()> {
-    println!("{:#?}", scraper().await);
-
-    // res.render(Text::Json(scraper().await));
-    Ok(())
+async fn thrasher_latest_videos_crawled(res: &mut Response) {
+    res.render(Text::Json(scraper().await))
 }
 
 #[tokio::main]
@@ -62,7 +59,7 @@ pub async fn main() {
 
     // Define Routing tree
     let routing = Router::new()
-        .get(scraptest)
+        .get(thrasher_latest_videos_crawled)
         .push(Router::with_path("signup").post(sign_up))
         .push(Router::with_path("signin").post(sign_in))
         .push(

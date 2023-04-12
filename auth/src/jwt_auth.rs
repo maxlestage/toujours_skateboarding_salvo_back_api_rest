@@ -1,6 +1,7 @@
 use database_connection::db_connection::db_connection;
 use jsonwebtoken::{self, EncodingKey};
-use queries::{password_is_valid, select_user_by_email};
+// use queries::{password_is_valid, select_user_by_email};
+use queries::user_queries::{password_is_valid, select_user_by_email};
 
 use salvo::http::{Method, StatusError};
 use salvo::hyper::header::{self};
