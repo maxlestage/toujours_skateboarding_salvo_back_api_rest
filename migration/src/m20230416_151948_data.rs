@@ -19,6 +19,7 @@ impl MigrationTrait for Migration {
                             .primary_key(),
                     )
                     .col(ColumnDef::new(Data::UserId).integer().not_null())
+                    .col(ColumnDef::new(Data::CreatedAt).date().not_null())
                     .col(ColumnDef::new(Data::Title).string().not_null())
                     .col(ColumnDef::new(Data::Description).string().not_null())
                     .col(ColumnDef::new(Data::Path).string().not_null())
@@ -40,6 +41,7 @@ enum Data {
     Table,
     Id,
     UserId,
+    CreatedAt,
     Title,
     Description,
     Path,
