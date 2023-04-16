@@ -25,7 +25,7 @@ pub struct Model {
     pub sign_up_date: Option<NaiveDate>,
     pub mail: String,
     pub password: String,
-    pub role: Role,
+    pub role: Option<Role>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

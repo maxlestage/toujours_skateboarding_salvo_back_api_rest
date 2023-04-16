@@ -14,6 +14,26 @@ use scraper::thrasher_latest_videos::scraper;
 
 use sea_orm::{entity::*, DatabaseConnection};
 
+use serde::{Deserialize, Serialize};
+use serde_json::json;
+
+#[derive(Serialize, Deserialize, Extractible, Debug)]
+#[extract(default_source(from = "body", format = "json"))]
+pub struct User {
+    firstname: String,
+    lastname: String,
+    mail: String,
+    password: String,
+}
+
+#[derive(Serialize, Deserialize, Extractible, Debug)]
+#[extract(default_source(from = "body", format = "json"))]
+pub struct Data {
+    title: String,
+    description: String,
+    path: String,
+}
+
 #[handler]
 async fn hello_world() -> &'static str {
     "Hello there!"
@@ -75,6 +95,7 @@ pub async fn main() {
                 .path("upload")
                 .hoop(auth_handler)
                 .get(hello_world)
+                .post(new_data)
                 .push(Router::with_path("<id>").get(hello_by_id)),
         );
 

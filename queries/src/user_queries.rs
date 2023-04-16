@@ -22,7 +22,7 @@ pub async fn create_user(
     let user_password = user_inputed.password.as_ref().clone();
     let hashed = hash(&user_password, DEFAULT_COST).unwrap();
 
-    user_inputed.role = sea_orm::ActiveValue::Set(Role::User);
+    user_inputed.role = sea_orm::ActiveValue::Set(Some(Role::User));
 
     user_inputed.sign_up_date =
         sea_orm::ActiveValue::Set(Some(Local::now().to_owned().date_naive()));

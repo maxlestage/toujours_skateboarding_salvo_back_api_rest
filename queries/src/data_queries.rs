@@ -18,6 +18,7 @@ pub async fn create_data(
     user_inputed.created_at = sea_orm::ActiveValue::Set(Some(Local::now().to_owned().date_naive()));
 
     let user_id = user_inputed.user_id.as_ref().clone();
+    // println!("{user_id}");
 
     if User::find()
         .filter(user::Column::Id.eq(user_id))
