@@ -24,13 +24,6 @@ pub async fn create_user(
 
     user_inputed.role = sea_orm::ActiveValue::Set(Role::User);
 
-    // match user_role {
-    //     Some(Role::Admin) => sea_orm::ActiveValue::Set(Some(Role::Admin)),
-    //     Some(Role::User) => sea_orm::ActiveValue::Set(Some(Role::User)),
-    //     None => sea_orm::ActiveValue::Set(Some(Role::Guest)),
-    //     _ => sea_orm::ActiveValue::Set(Some(Role::Guest)),
-    // };
-
     user_inputed.sign_up_date =
         sea_orm::ActiveValue::Set(Some(Local::now().to_owned().date_naive()));
 

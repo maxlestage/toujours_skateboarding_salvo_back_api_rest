@@ -8,7 +8,7 @@ edition = "2021"
 
 [lib]
 name = "entities"
-path = "src/mod.rs"
+path = "src/lib.rs"
 
 [dependencies]
 tokio = {workspace = true }

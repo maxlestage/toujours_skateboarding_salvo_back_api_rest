@@ -2,6 +2,7 @@
 use chrono::NaiveDate;
 use sea_orm::entity::prelude::*;
 // use sea_orm::entity::prelude::*;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(EnumIter, DeriveActiveEnum, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -29,4 +30,5 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {}
+
 impl ActiveModelBehavior for ActiveModel {}

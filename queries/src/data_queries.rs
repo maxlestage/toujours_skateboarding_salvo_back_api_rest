@@ -5,7 +5,7 @@ use sea_orm::ActiveModelTrait;
 use entities::prelude::User;
 use sea_orm::ColumnTrait;
 use sea_orm::DatabaseConnection;
-use sea_orm::DeleteResult;
+// use sea_orm::DeleteResult;
 use sea_orm::EntityTrait;
 use sea_orm::QueryFilter;
 
@@ -18,6 +18,7 @@ pub async fn create_data(
     user_inputed.created_at = sea_orm::ActiveValue::Set(Some(Local::now().to_owned().date_naive()));
 
     let user_id = user_inputed.user_id.as_ref().clone();
+
     if User::find()
         .filter(user::Column::Id.eq(user_id))
         .one(&db)

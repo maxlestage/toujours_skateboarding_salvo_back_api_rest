@@ -1,24 +1,18 @@
 use auth::jwt_auth::{sign_in, JwtClaims, SECRET_KEY};
+
 use database_connection::db_connection::db_connection;
+
+use queries::data_queries::create_data;
 use queries::user_queries::create_user;
+
 use salvo::http::StatusCode;
 use salvo::jwt_auth::HeaderFinder;
 use salvo::prelude::*;
 use salvo::{__private::tracing, handler /* , prelude::* */};
-use scraper::thrasher_latest_videos::scraper;
-use sea_orm::{entity::*, DatabaseConnection};
-use serde::{Deserialize, Serialize};
-use serde_json::json;
 
-#[derive(Serialize, Deserialize, Extractible, Debug)]
-#[extract(default_source(from = "body", format = "json"))]
-struct User {
-    firstname: String,
-    lastname: String,
-    mail: String,
-    password: String,
-    role: Option<String>,
-}
+use scraper::thrasher_latest_videos::scraper;
+
+use sea_orm::{entity::*, DatabaseConnection};
 
 #[handler]
 async fn hello_world() -> &'static str {
@@ -37,6 +31,20 @@ async fn sign_up(user_input: User, res: &mut Response) {
     let user = entities::user::ActiveModel::from_json(json!(user_input)).expect("not valid");
 
     if create_user(db_connect, user).await.is_some() {
+        res.set_status_code(StatusCode::CREATED);
+    } else {
+        res.set_status_code(StatusCode::BAD_REQUEST);
+    }
+}
+
+#[handler]
+async fn new_data(user_input: Data, res: &mut Response) {
+    let db_connect: DatabaseConnection = db_connection().await.expect("Error");
+
+    let created_data =
+        entities::data::ActiveModel::from_json(json!(user_input)).expect("not valid");
+
+    if create_data(db_connect, created_data).await.is_some() {
         res.set_status_code(StatusCode::CREATED);
     } else {
         res.set_status_code(StatusCode::BAD_REQUEST);
@@ -64,7 +72,7 @@ pub async fn main() {
         .push(Router::with_path("signin").post(sign_in))
         .push(
             Router::new()
-                .path("hello")
+                .path("upload")
                 .hoop(auth_handler)
                 .get(hello_world)
                 .push(Router::with_path("<id>").get(hello_by_id)),
