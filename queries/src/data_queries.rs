@@ -1,8 +1,8 @@
 use chrono::Local;
+use entities::prelude::User;
 use entities::*;
 use sea_orm::ActiveModelTrait;
-// use sea_orm::ActiveValue;
-use entities::prelude::User;
+
 use sea_orm::ColumnTrait;
 use sea_orm::DatabaseConnection;
 // use sea_orm::DeleteResult;
@@ -13,15 +13,19 @@ pub async fn create_data(
     db: DatabaseConnection,
     user_input: data::ActiveModel,
 ) -> Option<data::Model> {
-    let mut user_inputed = user_input;
+    let mut user_inputed = user_input.clone();
 
     user_inputed.created_at = sea_orm::ActiveValue::Set(Some(Local::now().to_owned().date_naive()));
 
-    let user_id = user_inputed.user_id.as_ref().clone();
-    // println!("{user_id}");
+    let id = match user_inputed.user_id.clone() {
+        sea_orm::ActiveValue::Set(user_id) => user_id, // extract the user ID if it's present
+        _ => return None,                              // return early if user ID is not set
+    };
+
+    println!("{:#?}", id);
 
     if User::find()
-        .filter(user::Column::Id.eq(user_id))
+        .filter(user::Column::Id.eq(id))
         .one(&db)
         .await
         .expect("pas gérée")
