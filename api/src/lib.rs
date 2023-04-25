@@ -1,6 +1,7 @@
 use auth::jwt_auth::{sign_in, JwtClaims, SECRET_KEY};
 
 use database_connection::db_connection::db_connection;
+use migration::{Migrator, MigratorTrait};
 
 use queries::data_queries::create_data;
 use queries::user_queries::create_user;
@@ -80,6 +81,9 @@ async fn thrasher_latest_videos_crawled(res: &mut Response) {
 pub async fn main() {
     tracing_subscriber::fmt().init();
     tracing::info!("Listening on http://0.0.0.0:7878");
+    let db_connect: DatabaseConnection = db_connection().await.expect("Error");
+    Migrator::up(&db_connect, None).await.expect("Error");
+
 
     let auth_handler: JwtAuth<JwtClaims> = JwtAuth::new(SECRET_KEY.to_owned())
         .with_finders(vec![Box::new(HeaderFinder::new())])

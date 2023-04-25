@@ -14,6 +14,6 @@ pub async fn db_connection() -> Result<DatabaseConnection, DbErr> {
         .await
         .expect("Not connected to the database.");
 
-    dbg!(Ok(db))
-    // Ok(db)
+    // dbg!(Ok(db))
+    Ok(db)
 }

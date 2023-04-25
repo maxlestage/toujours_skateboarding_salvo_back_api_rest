@@ -11,6 +11,7 @@ anyhow = "1"
 tokio = { version = "^1", features = ["macros"] }
 database_connection = { path = "../database_connection" }
 serde = "^1"
+sea-orm-migration = "^0"
 serde_json = "^1"
 tracing-subscriber = "0.3"
 jsonwebtoken = "8.0"
@@ -19,4 +20,5 @@ sea-orm = { version = "^0", features = [ "sqlx-postgres", "runtime-tokio-rustls"
 async-std = { version = "1", features = ["attributes", "tokio1"] }
 queries = { path = "../queries" }
 entities = { path = "../entities" }
+migration = { path = "../migration" }
 scraper =  { path = "../scraper" }
