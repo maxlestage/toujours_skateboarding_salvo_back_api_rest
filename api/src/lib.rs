@@ -10,7 +10,7 @@ use serde_json::json;
 use auth::jwt_auth::{sign_in, JwtClaims, SECRET_KEY};
 use database_connection::db_connection::db_connection;
 use migration::{Migrator, MigratorTrait};
-use queries::data_queries::{create_data, get_data};
+use queries::data_queries::{create_data, get_data, update_data};
 use queries::user_queries::create_user;
 use scraper::thrasher_latest_videos::scraper;
 
@@ -69,18 +69,28 @@ async fn new_data(user_input: Data, res: &mut Response) {
     }
 }
 
+#[handler]
 async fn select_data(req: &mut Request, res: &mut Response) {
+    let id = req.param::<i32>("id").unwrap();
     let db_connect: DatabaseConnection = db_connection().await.expect("Error");
 
-    let select_data = req.params().get("id").cloned().unwrap_or_default();
+    let selected_data = get_data(db_connect, id).await;
+    if selected_data.is_some() {
+        res.render(Json(selected_data));
+    } else {
+        res.set_status_code(StatusCode::NOT_FOUND);
+    }
+}
 
-    if get_data(db_connect, select_data.parse::<i32>().unwrap())
-        .await
-        .is_some()
-    {
+#[handler]
+async fn edit_data(req: &mut Request, user_input: Data, res: &mut Response) {
+    let id = req.param::<i32>("id").unwrap_or_default();
+    let db_connect: DatabaseConnection = db_connection().await.expect("Error");
+    let data = entities::data::ActiveModel::from_json(json!(user_input)).expect("not valid");
+    if update_data(db_connect, id, data).await.is_some() {
         res.set_status_code(StatusCode::OK);
     } else {
-        res.set_status_code(StatusCode::BAD_REQUEST);
+        res.set_status_code(StatusCode::NOT_FOUND);
     }
 }
 
@@ -105,15 +115,16 @@ pub async fn main() {
         .get(thrasher_latest_videos_crawled)
         .push(Router::with_path("signup").post(sign_up))
         .push(Router::with_path("signin").post(sign_in))
-        // .push(Router::with_path("<id>").get(select_data));
-        .push(
-            Router::new()
-                // .hoop(auth_handler)
-                // .path("upload")
-                // .get(hello_world)
-                // .post(new_data)
-                .push(Router::with_path("<id>").get(hello_by_id)),
-        );
+        .push(Router::with_path("<id>").get(select_data))
+        .push(Router::with_path("<id>").put(edit_data));
+    // .push(
+    //     Router::new()
+    //         // .hoop(auth_handler)
+    //         // .path("upload")
+    //         // .get(hello_world)
+    //         // .post(new_data)
+    //         .push(Router::with_path("<id>").get(hello_by_id)),
+    // );
 
     // Server Ready
     Server::new(TcpListener::bind("0.0.0.0:7878"))

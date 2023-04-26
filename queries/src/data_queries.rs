@@ -1,4 +1,5 @@
 use chrono::Local;
+
 use sea_orm::ActiveModelTrait;
 use sea_orm::ColumnTrait;
 use sea_orm::DatabaseConnection;
@@ -6,11 +7,9 @@ use sea_orm::EntityTrait;
 use sea_orm::QueryFilter;
 
 use entities::*;
-// use sea_orm::DeleteResult;
+
 use entities::prelude::Data;
 use entities::prelude::User;
-
-//use entities::user::Relation::Data;
 
 pub async fn create_data(
     db: DatabaseConnection,
@@ -24,8 +23,6 @@ pub async fn create_data(
         sea_orm::ActiveValue::Set(user_id) => user_id, // extract the user ID if it's present
         _ => return None,                              // return early if user ID is not set
     };
-
-    println!("{:#?}", id);
 
     if User::find()
         .filter(user::Column::Id.eq(id))
@@ -41,11 +38,26 @@ pub async fn create_data(
     }
 }
 
-pub async fn get_data(db: DatabaseConnection, user_input: i32) -> Option<data::Model> {
-    let selected: Option<data::Model> = Data::find_by_id(user_input)
-        .one(&db)
-        .await
-        .expect("not found");
-
+pub async fn get_data(db: DatabaseConnection, id: i32) -> Option<data::Model> {
+    let selected: Option<data::Model> = Data::find_by_id(id).one(&db).await.expect("Id not found");
     selected
+}
+
+pub async fn update_data(
+    db: DatabaseConnection,
+    id: i32,
+    user_input: data::ActiveModel,
+) -> Option<data::Model> {
+    let data: Option<data::Model> = Data::find_by_id(id).one(&db).await.expect("Not found");
+
+    let mut data: data::ActiveModel = data.unwrap().into();
+
+    let title: String = user_input.title.unwrap();
+    let description: String = user_input.description.unwrap();
+
+    data.title = sea_orm::ActiveValue::Set(title);
+    data.description = sea_orm::ActiveValue::Set(description);
+
+    let data: data::Model = data.update(&db).await.expect("Not updated");
+    Some(data)
 }
