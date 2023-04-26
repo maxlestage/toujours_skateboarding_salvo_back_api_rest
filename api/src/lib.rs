@@ -1,24 +1,18 @@
-use auth::jwt_auth::{sign_in, JwtClaims, SECRET_KEY};
-
-use database_connection::db_connection::db_connection;
-use migration::{Migrator, MigratorTrait};
-
-use queries::data_queries::create_data;
-use queries::user_queries::create_user;
-
 use salvo::http::StatusCode;
 use salvo::jwt_auth::HeaderFinder;
 use salvo::prelude::*;
 use salvo::{__private::tracing, handler /* , prelude::* */};
-
-use scraper::thrasher_latest_videos::scraper;
-
-
 // use scraper::youtube_thrasher_latest_videos::scraper_yt;
 use sea_orm::{entity::*, DatabaseConnection};
-
 use serde::{Deserialize, Serialize};
 use serde_json::json;
+
+use auth::jwt_auth::{sign_in, JwtClaims, SECRET_KEY};
+use database_connection::db_connection::db_connection;
+use migration::{Migrator, MigratorTrait};
+use queries::data_queries::{create_data, get_data};
+use queries::user_queries::create_user;
+use scraper::thrasher_latest_videos::scraper;
 
 #[derive(Serialize, Deserialize, Extractible, Debug)]
 #[extract(default_source(from = "body", format = "json"))]
@@ -32,6 +26,7 @@ pub struct User {
 #[derive(Serialize, Deserialize, Extractible, Debug)]
 #[extract(default_source(from = "body", format = "json"))]
 pub struct Data {
+    user_id: i32,
     title: String,
     description: String,
     path: String,
@@ -74,6 +69,21 @@ async fn new_data(user_input: Data, res: &mut Response) {
     }
 }
 
+async fn select_data(req: &mut Request, res: &mut Response) {
+    let db_connect: DatabaseConnection = db_connection().await.expect("Error");
+
+    let select_data = req.params().get("id").cloned().unwrap_or_default();
+
+    if get_data(db_connect, select_data.parse::<i32>().unwrap())
+        .await
+        .is_some()
+    {
+        res.set_status_code(StatusCode::OK);
+    } else {
+        res.set_status_code(StatusCode::BAD_REQUEST);
+    }
+}
+
 #[handler]
 async fn thrasher_latest_videos_crawled(res: &mut Response) {
     res.render(Text::Json(scraper().await))
@@ -86,7 +96,6 @@ pub async fn main() {
     let db_connect: DatabaseConnection = db_connection().await.expect("Error");
     Migrator::up(&db_connect, None).await.expect("Error");
 
-
     let auth_handler: JwtAuth<JwtClaims> = JwtAuth::new(SECRET_KEY.to_owned())
         .with_finders(vec![Box::new(HeaderFinder::new())])
         .with_response_error(true);
@@ -96,12 +105,13 @@ pub async fn main() {
         .get(thrasher_latest_videos_crawled)
         .push(Router::with_path("signup").post(sign_up))
         .push(Router::with_path("signin").post(sign_in))
+        // .push(Router::with_path("<id>").get(select_data));
         .push(
             Router::new()
-                .path("upload")
-                .hoop(auth_handler)
-                .get(hello_world)
-                .post(new_data)
+                // .hoop(auth_handler)
+                // .path("upload")
+                // .get(hello_world)
+                // .post(new_data)
                 .push(Router::with_path("<id>").get(hello_by_id)),
         );
 
