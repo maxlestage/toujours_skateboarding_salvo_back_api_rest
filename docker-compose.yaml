@@ -1,18 +1,17 @@
-version: "3"
+version: "3" # Version du format de fichier pour Docker Compose
 
-services:
-  db:
-    image: postgres:latest
-    container_name: toujours_skateboarding-db
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: toujours_skateboarding
-    volumes:
-      - toujours_skateboarding-db-data:/var/lib/postgresql/data
-      - ./init-database.sh:/docker-entrypoint-initdb.d/init-database.sh
-    ports:
-      - "5432:5432"
+services: # Services que Docker doit créer et gérer
+  db: # Nom du service pour la base de données
+    image: postgres:latest # Image Docker utilisée pour ce service
+    container_name: toujours_skateboarding-db # Nom du conteneur Docker créé pour ce service
+    environment: # Variables d'environnement utilisées par le conteneur
+      POSTGRES_USER: postgres # Nom d'utilisateur pour la base de données
+      POSTGRES_PASSWORD: toujours_skateboarding # Mot de passe pour l'utilisateur de la base de données
+    volumes: # Volumes montés dans le conteneur
+      - toujours_skateboarding-db-data:/var/lib/postgresql/data # Volume pour stocker les données de la base de données
+      - ./init-database.sh:/docker-entrypoint-initdb.d/init-database.sh # Volume pour exécuter un script de création de la base de données
+    ports: # Ports exposés par le conteneur
+      - "5432:5432" # Port utilisé pour accéder à la base de données depuis l'hôte
 
-volumes:
-  toujours_skateboarding-db-data:
-
+volumes: # Définition des volumes utilisés dans le docker-compose
+  toujours_skateboarding-db-data: # Nom du volume pour les données de la base de données
