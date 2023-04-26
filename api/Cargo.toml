@@ -22,3 +22,4 @@ queries = { path = "../queries" }
 entities = { path = "../entities" }
 migration = { path = "../migration" }
 scraper =  { path = "../scraper" }
+structs = { path = "../structs"}

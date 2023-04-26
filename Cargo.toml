@@ -18,6 +18,7 @@ queries = { path = "queries" }
 entities = { path = "entities" }
 auth =  {path = "auth" }
 scraper = { path = "scraper" }
+structs = { path = "structs" }
 
 [workspace.dependencies]
 tokio = { version = "^1", features = ["macros"] }
