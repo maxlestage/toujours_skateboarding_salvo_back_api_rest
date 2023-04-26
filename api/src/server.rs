@@ -11,7 +11,6 @@ use salvo::prelude::{JwtAuth, TcpListener};
 use salvo::Server;
 use sea_orm::DatabaseConnection;
 
-#[tokio::main]
 pub async fn main() {
     tracing_subscriber::fmt().init();
     tracing::info!("Listening on http://0.0.0.0:7878");
