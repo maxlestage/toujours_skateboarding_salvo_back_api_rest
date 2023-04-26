@@ -1,8 +1,14 @@
 use scraper::{Html, Selector};
+use serde::{Serialize, Deserialize};
+
+#[derive(Debug, Serialize, Deserialize)]
+struct VideoData {
+    video_name: String,
+    description: String,
+    link: String,
+}
 
 pub async fn scraper() -> String {
-    // Certains titre en des caractères spéciaux, il serait bon de les identifier en parsant plusieur titre de string à vec<u8> ou en utilisant as_byte() pour trouver les caractères qui produisent des erreurs et les échapper.
-
     let url = "https://www.thrashermagazine.com/articles/videos/";
     let response = reqwest::get(url).await.expect("scraper error");
     let body = response.text().await.unwrap();
@@ -14,8 +20,7 @@ pub async fn scraper() -> String {
     let video_description_selector = Selector::parse(".post-description").unwrap();
     let video_link_selector = Selector::parse(".post-title-link").unwrap();
 
-    let mut formatted_links = Vec::new(); // initialise le vecteur vide
-    let mut formatted_links_string: String = String::new();
+    let mut video_data = Vec::new();
     for element in document.select(&video_selector) {
         let video_name_element = element
             .select(&video_name_selector)
@@ -43,14 +48,16 @@ pub async fn scraper() -> String {
             .attr("href")
             .expect("Could not find href attribute.");
 
-        let linked = format!("https://www.thrashermagazine.com{link}");
-        let data = format!(
-            "{{ \"video_name\": \"{}\", \"description\": \"{}\", \"link\": \"{}\" }},",
-            video_name, description, linked
-        );
-        formatted_links.push(data.to_string());
-        formatted_links_string = formatted_links.join("\n");
+        let linked = format!("https://www.thrashermagazine.com{}", link);
+
+        let video = VideoData {
+            video_name: video_name.to_string(),
+            description,
+            link: linked,
+        };
+
+        video_data.push(video);
     }
-    // formatted_links_string;
-    format!("[{}]", formatted_links_string)
+
+    serde_json::to_string(&video_data).unwrap()
 }
