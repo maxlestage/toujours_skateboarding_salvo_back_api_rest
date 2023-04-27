@@ -34,7 +34,7 @@ let cookie = cookies.iter()
     let video_selector = Selector::parse("ytd-grid-video-renderer").unwrap();
 
     let mut formatted_links = Vec::new();
-    let mut formatted_links_string: String = String::new();
+    let formatted_links_string: String;
     for element in document.select(&video_selector) {
         let title_selector = Selector::parse("a#video-title").unwrap();
         let description_selector = Selector::parse("yt-formatted-string#description-text").unwrap();
