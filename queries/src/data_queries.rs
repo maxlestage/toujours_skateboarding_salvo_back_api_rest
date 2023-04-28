@@ -3,6 +3,7 @@ use chrono::Local;
 use sea_orm::ActiveModelTrait;
 use sea_orm::ColumnTrait;
 use sea_orm::DatabaseConnection;
+use sea_orm::ModelTrait;
 use sea_orm::EntityTrait;
 use sea_orm::QueryFilter;
 
@@ -43,6 +44,11 @@ pub async fn get_data(db: DatabaseConnection, id: i32) -> Option<data::Model> {
     selected
 }
 
+pub async fn get_all_data(db: DatabaseConnection) -> Vec<entities::data::Model>{
+let all_data: Vec<data::Model> = Data::find().all(&db).await.expect("No data for the moment.");
+all_data
+}
+
 pub async fn update_data(
     db: DatabaseConnection,
     id: i32,
@@ -60,4 +66,10 @@ pub async fn update_data(
 
     let data: data::Model = data.update(&db).await.expect("Not updated");
     Some(data)
+}
+
+pub async fn delete_data( db: DatabaseConnection,id: i32){
+    let remove_data: Option<data::Model> = Data::find_by_id(id).one(&db).await.expect("Not Found");
+    let remove_data: data::Model = remove_data.unwrap();
+    remove_data.delete(&db).await.expect("Error delete not work.");
 }

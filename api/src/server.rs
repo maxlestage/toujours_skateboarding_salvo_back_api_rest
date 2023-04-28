@@ -1,5 +1,5 @@
 use crate::handlers::{
-    edit_data, hello_by_id, new_data, select_data, sign_up, thrasher_latest_videos_crawled,
+    edit_data, hello_by_id, new_data, select_data, sign_up, thrasher_latest_videos_crawled, getall_data, deleteted_data,
 };
 use auth::jwt_auth::{sign_in, JwtClaims, SECRET_KEY};
 use database_connection::db_connection::db_connection;
@@ -30,9 +30,10 @@ pub async fn main() {
             Router::new()
                 .hoop(auth_handler)
                 .path("data")
+                .get(getall_data)
                 .post(new_data)
-                .push(Router::with_path("<id>").get(select_data))
-                .push(Router::with_path("<id>").put(edit_data)),
+                .push(Router::with_path("<id>").get(select_data).put(edit_data).delete(deleteted_data))
+                // .push(Router::with_path("<id>").put(edit_data)),
         )
         .push(
             Router::new()
