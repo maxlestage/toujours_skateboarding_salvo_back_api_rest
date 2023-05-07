@@ -6,8 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-salvo = "*"
-anyhow = "1"
+salvo = {version = "0.37.9", features=["cors"]}
+anyhow = "^1"
 tokio = { version = "^1", features = ["macros"] }
 database_connection = { path = "../database_connection" }
 serde = "^1"
