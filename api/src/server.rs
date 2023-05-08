@@ -23,6 +23,7 @@ pub async fn empty(_req: &mut Request, res: &mut Response) {
 pub async fn main() {
     tracing_subscriber::fmt().init();
     tracing::info!("Listening on http://0.0.0.0:7878");
+
     let db_connect: DatabaseConnection = db_connection().await.expect("Error");
     Migrator::up(&db_connect, None).await.expect("Error");
 
