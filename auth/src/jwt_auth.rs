@@ -1,3 +1,5 @@
+use std::fmt::format;
+
 use database_connection::db_connection::db_connection;
 use jsonwebtoken::{self, EncodingKey};
 // use queries::{password_is_valid, select_user_by_email};
@@ -8,6 +10,7 @@ use salvo::hyper::header::{self};
 use salvo::prelude::*;
 use sea_orm::DatabaseConnection;
 use serde::{Deserialize, Serialize};
+use serde_json::json;
 use time::{Duration, OffsetDateTime};
 pub const SECRET_KEY: &str = "YOUR_SECRET_KEY_JWT_TOUJOURS_$KÆ™Ê∫ŒÆR∆ïINﬂ_TOKEN";
 
@@ -54,9 +57,15 @@ pub async fn sign_in(
             return Ok(());
         }
 
-        res.add_header(header::AUTHORIZATION, format!("Bearer {}", token), true)
+        let jwt_to_json = json!({ "Bearer": token });
+        let jwt_response = serde_json::to_string(&jwt_to_json)?;
+
+        res.add_header(header::AUTHORIZATION, format!("Bearer {token}"), true)
             .expect("error token");
-        res.render(Text::Json(format!("Bearer:{}", token)));
+
+        res.render(Text::Json(&jwt_response));
+        res.set_status_code(StatusCode::OK);
+
         return Ok(());
     } else {
         match depot.jwt_auth_state() {
