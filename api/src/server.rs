@@ -32,7 +32,7 @@ pub async fn main() {
         .with_response_error(true);
 
     let cors_handler: Cors = Cors::builder()
-        .allow_origin("http://localhost:3000")
+        .allow_any_origin()
         .allow_methods(vec!["GET", "POST", "PUT", "DELETE"])
         .allow_headers(vec![
             "CONTENT-TYPE",
@@ -40,6 +40,11 @@ pub async fn main() {
             "Access-Control-Allow-Origin",
             "Access-Control-Allow-Headers",
             "Access-Control-Max-Age",
+            "Access-Control-Allow-Credentials",
+            "Access-Control-Request-Headers",
+            "Accept",
+            "Access-Control-Request-Method",
+            "Authorization",
         ])
         .build();
 
@@ -52,8 +57,8 @@ pub async fn main() {
         .push(Router::with_path("signin").post(sign_in))
         .push(
             Router::new()
-                .hoop(auth_handler)
                 .path("data")
+                .hoop(auth_handler)
                 .get(getall_data)
                 .post(new_data)
                 .push(

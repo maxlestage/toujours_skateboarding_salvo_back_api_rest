@@ -1,5 +1,3 @@
-use std::fmt::format;
-
 use database_connection::db_connection::db_connection;
 use jsonwebtoken::{self, EncodingKey};
 // use queries::{password_is_valid, select_user_by_email};
