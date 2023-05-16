@@ -1,5 +1,8 @@
+use std::println;
+
 use database_connection::db_connection::db_connection;
 use jsonwebtoken::{self, EncodingKey};
+
 // use queries::{password_is_valid, select_user_by_email};
 use queries::user_queries::{password_is_valid, select_user_by_email};
 
@@ -25,6 +28,14 @@ struct User {
     password: String,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct UserResponse {
+    id: i32,
+    firstname: String,
+    lastname: String,
+    mail: String,
+}
+
 #[handler]
 pub async fn sign_in(
     req: &mut Request,
@@ -32,11 +43,12 @@ pub async fn sign_in(
     res: &mut Response,
 ) -> anyhow::Result<()> {
     let db_connect: DatabaseConnection = db_connection().await.expect("Error");
+
     if req.method() == Method::POST {
         let user: User = req.extract().await.unwrap();
         let (mail, password) = (user.mail, user.password);
 
-        let is_valid = validate(&mail, &password, db_connect);
+        let is_valid = validate(&mail, &password, db_connect.clone());
 
         let exp = OffsetDateTime::now_utc() + Duration::days(14);
         let claim = JwtClaims {
@@ -55,7 +67,20 @@ pub async fn sign_in(
             return Ok(());
         }
 
-        let jwt_to_json = json!({ "Bearer": token });
+        let get_user = select_user_by_email(db_connect, mail)
+            .await
+            .expect("not found");
+
+        let user_response = UserResponse {
+            id: get_user.id,
+            firstname: get_user.firstname,
+            lastname: get_user.lastname,
+            mail: get_user.mail,
+        };
+
+        println!("ici user_response >>>>>>>>>>>>>>: {:#?}", user_response);
+
+        let jwt_to_json = json!({ "Bearer": token, "user": user_response });
         let jwt_response = serde_json::to_string(&jwt_to_json)?;
 
         res.add_header(header::AUTHORIZATION, format!("Bearer {token}"), true)

@@ -1,8 +1,6 @@
-
 use salvo::http::StatusCode;
 
 use salvo::prelude::*;
-
 
 // use scraper::youtube_thrasher_latest_videos::scraper_yt;
 use sea_orm::{entity::*, DatabaseConnection};
@@ -11,7 +9,7 @@ use serde_json::json;
 
 use database_connection::db_connection::db_connection;
 
-use queries::data_queries::{create_data, get_data, update_data, delete_data, get_all_data};
+use queries::data_queries::{create_data, delete_data, get_all_data, get_data, update_data};
 use queries::user_queries::create_user;
 use scraper::thrasher_latest_videos::scraper;
 use structs::data::{Data, DataToJson};
@@ -81,17 +79,14 @@ pub async fn getall_data(res: &mut Response) {
             DataToJson {
                 title,
                 description,
-                path
+                path,
             }
         })
         .collect();
 
     let json_data = serde_json::to_string(&data).expect("JSON pas bon tu co-co bébé");
     res.render(Text::Json(json_data))
-  
 }
-
-
 
 #[handler]
 pub async fn edit_data(req: &mut Request, user_input: Data, res: &mut Response) {
@@ -104,7 +99,6 @@ pub async fn edit_data(req: &mut Request, user_input: Data, res: &mut Response) 
         res.set_status_code(StatusCode::NOT_FOUND);
     }
 }
-
 
 #[handler]
 pub async fn deleteted_data(req: &mut Request, res: &mut Response) {
