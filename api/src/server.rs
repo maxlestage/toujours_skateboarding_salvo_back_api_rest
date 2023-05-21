@@ -45,6 +45,7 @@ pub async fn main() {
             "Accept",
             "Access-Control-Request-Method",
             "Authorization",
+            "OPTIONS",
         ])
         .build();
 
