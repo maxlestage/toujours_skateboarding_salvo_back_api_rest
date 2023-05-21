@@ -73,10 +73,13 @@ pub async fn getall_data(res: &mut Response) {
     let data: Vec<DataToJson> = data
         .into_iter()
         .map(|d| {
+            let user_id = d.user_id.clone();
             let title = d.title.clone();
             let description = d.description.clone();
             let path = d.path.clone();
+
             DataToJson {
+                user_id,
                 title,
                 description,
                 path,
